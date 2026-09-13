@@ -162,7 +162,7 @@ document.querySelectorAll('.reverse-btn').forEach(button => {
         const songUrl = songCard.getAttribute('data-src');
 
         statusMsg.innerText = "Just a moment, let us queue that up for you";
-        playerStatusTitle.innerText = "🌀 Reversed Audio Player";
+        playerStatusTitle.innerText = `🌀 Reversed Player: ${songCard.getAttribute('data-title')}`;
 
         try {
             await prepareReverseAudio(songUrl);
@@ -267,7 +267,7 @@ document.querySelectorAll('.lyrics-btn').forEach(button => {
         const songCard = e.target.closest('.song-card');
         speechText = songCard.getAttribute('data-lyrics');
 
-        playerStatusTitle.innerText = "🗣️ Lyrics Speech Player";
+        playerStatusTitle.innerText = `🗣️ Speech Player: ${songCard.getAttribute('data-title')}`;
         statusMsg.innerText = "🗣️ Speaking lyrics...";
         
         tunePlayerBox.classList.remove('hidden');
@@ -417,7 +417,7 @@ document.querySelectorAll('.song-btn').forEach(button => {
         activeAudio.play();
 
         lockoutScreen.classList.remove('hidden');
-        statusMsg.innerText = "⏱️ Playing song for 10 seconds (Locked)...";
+        statusMsg.innerText = `⏱️ Playing ${songCard.getAttribute('data-title')} for 10 seconds (Locked)...`;
 
         setTimeout(() => {
             activeAudio.pause();
