@@ -115,19 +115,23 @@ function stopAllPlayback() {
 }
 
 // MODE 1: ENJOY THE TUNE (Reversed Audio with Custom Controls Box)
+// MODE 1: ENJOY THE TUNE (Reversed Audio with Custom Controls Box)
 document.querySelectorAll('.reverse-btn').forEach(button => {
     button.addEventListener('click', async (e) => {
         stopAllPlayback();
         const songCard = e.target.closest('.song-card');
         const songUrl = songCard.getAttribute('data-src');
 
-        statusMsg.innerText = "🌀 Fetching audio and reversing waveform... Please wait!";
+        // Updated loading message
+        statusMsg.innerText = "Just a moment, let us queue that up for you :))";
 
         try {
             await prepareReverseAudio(songUrl);
             tunePlayerBox.classList.remove('hidden'); // Reveal custom controls rectangle
             startReverseAudio(0); // Start from beginning
-            statusMsg.innerText = "▶ Playing reversed audio with custom controls!";
+            
+            // Updated playing message
+            statusMsg.innerText = "Enjoy the tune in reverse!";
         } catch (err) {
             console.error(err);
             statusMsg.innerText = "❌ Failed to load audio file.";
