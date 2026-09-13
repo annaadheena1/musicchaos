@@ -53,7 +53,7 @@ open index.html in live server
 For Software:
 
 # Screenshots (Add at least 3)
-
+https://docs.google.com/document/d/1Z4sYp_UX7VI2Kdqcj7sh3M-acd8t1AEl_QXjoDxUVEk/edit?usp=sharing
 
 
 
