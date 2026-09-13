@@ -1,6 +1,7 @@
 // Audio setup
 // Place your audio file 'blinded-lights-snippet.mp3' inside your project folder
-const introAudio = new Audio('blindedlights.mpeg'); 
+// Direct working link to the song snippet online
+const introAudio = new Audio('https://files.catbox.moe/nq6hdt.mp3');
 introAudio.loop = true;
 
 let playbackSpeed = 1.0;

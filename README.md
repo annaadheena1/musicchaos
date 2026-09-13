@@ -6,13 +6,13 @@
 
 
 ## Basic Details
-### Team Name: [Name]
+### Team Name: Adheena
 
 
 ### Team Members
-- Team Lead: [Name] - [College]
-- Member 2: [Name] - [College]
-- Member 3: [Name] - [College]
+- Team Lead: Adheena Anna Thomas - Cochin University of Science and Technology, School of Engineering
+- Member 2: Ayisha Hiba K.F. - Cochin University of Science and Technology, School of Engineering
+
 
 ### Project Description
 [2-3 lines about what your project does]

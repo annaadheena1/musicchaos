@@ -4,35 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chaotic Music Player</title>
+    <!-- Check that style.css is in the same folder -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- INTRO POPUP OVERLAY (Visible on Page Load) -->
+    <!-- INTRO POPUP OVERLAY -->
     <div id="intro-modal" class="modal-overlay">
         <div class="modal-content">
-            <!-- Start Screen Prompt (Required by browsers to play audio) -->
+            
             <div id="start-screen">
                 <h2>⚠️ WARNING ⚠️</h2>
                 <p>Click anywhere inside this box to enter the player...</p>
             </div>
 
-            <!-- Active Trap Area (Hidden until first click) -->
             <div id="trap-screen" class="hidden">
                 <h2>Ooops! Find the REAL Close Button!</h2>
                 <p>Wrong buttons restart and speed up the song!</p>
-                <!-- Close buttons will spawn inside here -->
                 <div id="button-container"></div>
             </div>
+
         </div>
     </div>
 
-    <!-- MAIN SONG SELECTION PAGE (Hidden initially) -->
+    <!-- MAIN SONG SELECTION PAGE -->
     <main id="main-player" class="hidden">
         <h1>🎵 Song Selection</h1>
         <p>Choose a track to test the player modes!</p>
-        
-        <!-- We will add the 3 playback modes here next -->
     </main>
 
     <script src="script.js"></script>
