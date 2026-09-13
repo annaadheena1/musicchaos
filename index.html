@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +7,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <!-- Off-Screen YouTube Player Container (Allows audio playback while hidden) -->
+    <div id="youtube-player" style="position: absolute; top: -9999px; left: -9999px;"></div>
 
     <!-- INTRO POPUP OVERLAY -->
     <div id="intro-modal" class="modal-overlay">
@@ -26,33 +28,14 @@
 
     <!-- MAIN SONG SELECTION PAGE -->
     <main id="main-player" class="hidden">
-        <h1>🎵 Song Selection</h1>
-        <p id="selection-subtext">Select a mode to play the track!</p>
-
-        <div id="song-list">
+            <div id="song-list">
             <!-- Song Card 1: vampire -->
             <div class="song-card" 
                  data-index="0"
                  data-title="vampire" 
                  data-src="https://files.catbox.moe/3g51mp.mp3" 
-                 data-lyrics="I hate to give the satisfaction asking how you're doing now
-How's the castle built off people you pretend to care about?
-Just what you wanted
-Look at you, cool guy, you got it
-I see the parties and the diamonds sometimes when I close my eyes
-Six months of torture you sold as some forbidden paradise
-I loved you truly
-You gotta laugh at the stupidity
-'Cause I've made some real big mistakes
-But you make the worst one look fine
-I should've known it was strange
-You only come out at night
-I used to think I was smart
-But you made me look so naive
-The way you sold me for parts
-As you sunk your teeth into me, oh
-Bloodsucker, fame-fucker
-Bleedin' me dry like a goddamn vampire">
+                 data-ytid="GiLy9P3o08k"
+                 data-lyrics="I hate to give the satisfaction asking how you're doing now How's the castle built off people you pretend to care about? Just what you wanted Look at you, cool guy, you got it I see the parties and the diamonds sometimes when I close my eyes Six months of torture you sold as some forbidden paradise I loved you truly You gotta laugh at the stupidity 'Cause I've made some real big mistakes But you make the worst one look fine I should've known it was strange You only come out at night I used to think I was smart But you made me look so naive The way you sold me for parts As you sunk your teeth into me, oh Bloodsucker, fame-fucker Bleedin' me dry like a goddamn vampire">
                 
                 <h3>1. vampire - Olivia Rodrigo</h3>
                 <div class="mode-buttons">
@@ -67,15 +50,8 @@ Bleedin' me dry like a goddamn vampire">
                  data-index="1"
                  data-title="Billie Jean" 
                  data-src="https://files.catbox.moe/3g51mp.mp3" 
-                 data-lyrics="She was more like a beauty queen from a movie scene
-I said don't mind, but what do you mean, I am the one
-Who will dance on the floor in the round?
-She said I am the one, who will dance on the floor in the round
-She told me her name was Billie Jean, as she caused a scene
-Then every head turned with eyes that dreamed of being the one
-Who will dance on the floor in the round
-People always told me be careful of what you do
-And don't go around breaking young girls' hearts">
+                 data-ytid="Zi_XLOBDo_Y"
+                 data-lyrics="She was more like a beauty queen from a movie scene I said don't mind, but what do you mean, I am the one Who will dance on the floor in the round? She said I am the one, who will dance on the floor in the round She told me her name was Billie Jean, as she caused a scene Then every head turned with eyes that dreamed of being the one Who will dance on the floor in the round People always told me be careful of what you do And don't go around breaking young girls' hearts">
                 
                 <h3>2. Billie Jean - Michael Jackson</h3>
                 <div class="mode-buttons">
@@ -90,14 +66,8 @@ And don't go around breaking young girls' hearts">
                  data-index="2"
                  data-title="Espresso" 
                  data-src="https://files.catbox.moe/3g51mp.mp3" 
-                 data-lyrics="Now he's thinkin' 'bout me every night, oh
-Is it that sweet? I guess so
-Say you can't sleep, baby, I know
-That's that me, espresso
-Move it up, down, left, right, oh
-Switch it up like Nintendo
-Say you can't sleep, baby, I know
-That's that me, espresso">
+                 data-ytid="eVli-tstM5E"
+                 data-lyrics="Now he's thinkin' 'bout me every night, oh Is it that sweet? I guess so Say you can't sleep, baby, I know That's that me, espresso Move it up, down, left, right, oh Switch it up like Nintendo Say you can't sleep, baby, I know That's that me, espresso">
                 
                 <h3>3. Espresso - Sabrina Carpenter</h3>
                 <div class="mode-buttons">
@@ -112,14 +82,8 @@ That's that me, espresso">
                  data-index="3"
                  data-title="Flowers" 
                  data-src="https://files.catbox.moe/3g51mp.mp3" 
-                 data-lyrics="We were good, we were gold
-Kinda dream that can't be sold
-We were right 'til we weren't
-Built a home and watched it burn
-I can buy myself flowers
-Write my name in the sand
-Talk to myself for hours
-Say things you don't understand">
+                 data-ytid="G7KNmW9a75Y"
+                 data-lyrics="We were good, we were gold Kinda dream that can't be sold We were right 'til we weren't Built a home and watched it burn I can buy myself flowers Write my name in the sand Talk to myself for hours Say things you don't understand">
                 
                 <h3>4. Flowers - Miley Cyrus</h3>
                 <div class="mode-buttons">
@@ -134,16 +98,8 @@ Say things you don't understand">
                  data-index="4"
                  data-title="As It Was" 
                  data-src="https://files.catbox.moe/3g51mp.mp3" 
-                 data-lyrics="Come on, Harry, we wanna say goodnight to you
-Holdin' me back
-Gravity's holdin' me back
-I want you to hold out the palm of your hand
-Why don't we leave it at that?
-Nothing to say
-When everything gets in the way
-You know it's not the same as it was
-In this world, it's just us
-You know it's not the same as it was">
+                 data-ytid="H5v3kku4y6Q"
+                 data-lyrics="Come on, Harry, we wanna say goodnight to you Holdin' me back Gravity's holdin' me back I want you to hold out the palm of your hand Why don't we leave it at that? Nothing to say When everything gets in the way You know it's not the same as it was In this world, it's just us You know it's not the same as it was">
                 
                 <h3>5. As It Was - Harry Styles</h3>
                 <div class="mode-buttons">
@@ -158,14 +114,8 @@ You know it's not the same as it was">
                  data-index="5"
                  data-title="Cruel Summer" 
                  data-src="https://files.catbox.moe/3g51mp.mp3" 
-                 data-lyrics="Fever dream high in the quiet of the night
-You know that I caught it
-Bad, bad boy, shiny toy with a price
-You know that I bought it
-And it's new, the shape of your body
-It's blue, the feeling I've got
-And it's ooh, whoa-oh
-It's a cruel summer with you">
+                 data-ytid="ic8j13piUrQ"
+                 data-lyrics="Fever dream high in the quiet of the night You know that I caught it Bad, bad boy, shiny toy with a price You know that I bought it And it's new, the shape of your body It's blue, the feeling I've got And it's ooh, whoa-oh It's a cruel summer with you">
                 
                 <h3>6. Cruel Summer - Taylor Swift</h3>
                 <div class="mode-buttons">
@@ -174,54 +124,6 @@ It's a cruel summer with you">
                     <button class="mode-btn song-btn">⏱️ Enjoy the Song</button>
                 </div>
             </div>
-
-            <!-- Song Card 2: Billie Jean -->
-            <div class="song-card" 
-            data-title="Billie Jean" 
-              data-src="billiejean.mp3" 
-                 data-lyrics="She was more like a beauty queen from a movie scene
-I said don't mind, but what do you mean, I am the one
-Who will dance on the floor in the round?
-She said I am the one, who will dance on the floor in the round
-She told me her name was Billie Jean, as she caused a scene
-Then every head turned with eyes that dreamed of being the one
-Who will dance on the floor in the round
-People always told me be careful of what you do
-And don't go around breaking young girls' hearts
-And mother always told me be careful of who you love
-And be careful of what you do 'cause the lie becomes the truth
-Billie Jean is not my lover
-She's just a girl who claims that I am the one
-But the kid is not my son
-She says I am the one, but the kid is not my son
-For forty days and forty nights, law was on her side
-But who can stand when she's in demand, her schemes and plans
-'Cause we danced on the floor in the round
-So take my strong advice, just remember to always think twice
-Do think twice
-She told my baby we'd danced till three, then she looked at me
-Then showed a photo my baby cried his eyes were like mine
-Go on and dance on the floor in the round
-People always told me be careful of what you do
-And don't go around breaking young girls' hearts
-She came and stood right by me, then the smell of sweet perfume
-This happened much too soon, she called me to her room
-Billie Jean is not my lover
-She's just a girl who claims that I am the one
-But the kid is not my son
-Billie Jean is not my lover
-She's just a girl who claims that I am the one
-But the kid is not my son
-She says I am the one, but the kid is not my son">
-                
-                <h3>2. Billie Jean - Michael Jackson</h3>
-                
-                <div class="mode-buttons">
-                    <button class="mode-btn reverse-btn">🌀 Enjoy the Tune</button>
-                    <button class="mode-btn lyrics-btn">🗣️ Enjoy the Lyrics</button>
-                    <button class="mode-btn song-btn">⏱️ Enjoy the Song</button>
-                </div>
-            </div>
         </div>
 
         <!-- Custom Audio Controls Rectangle (Shared by Enjoy Tune & Enjoy Lyrics) -->
@@ -239,33 +141,13 @@ She says I am the one, but the kid is not my son">
                 <input type="range" id="volume-bar" value="1" min="0" max="1" step="0.05">
             </div>
 
-            <!-- Back Button inside active player mode -->
-            <button id="back-btn" class="nav-btn">← Back to Song Selection</button>
-        </div>
-
-        <!-- Custom Audio Controls Rectangle (Shared by Enjoy Tune & Enjoy Lyrics) -->
-        <div id="tune-player-box" class="player-rectangle hidden">
-            <h4 id="player-status-title">Player</h4>
-            
-            <div class="controls-row">
-                <button id="play-pause-btn" class="ctrl-btn">⏸ Pause</button>
-                <input type="range" id="seek-bar" value="0" min="0" max="100" step="0.1">
-                <span id="time-display">0:00 / 0:00</span>
-            </div>
-
-            <div class="volume-row">
-                <label for="volume-bar">🔊 Volume:</label>
-                <input type="range" id="volume-bar" value="1" min="0" max="1" step="0.05">
-            </div>
-
-            <!-- Back Button inside active player mode -->
             <button id="back-btn" class="nav-btn">← Back to Song Selection</button>
         </div>
 
         <div id="status-message"></div>
     </main>
 
-    <!-- Transparent Lockout Screen for 10-Second Mode -->
+    <!-- Transparent Lockout Screen for Unskippable Song Mode -->
     <div id="lockout-screen" class="hidden">
         <div class="lockout-text" id="lockout-text-display">🔒 Player Locked! Playing song chain...</div>
     </div>

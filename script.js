@@ -10,8 +10,37 @@ let audioCtx = null;
 let currentBufferSource = null;
 let reversedAudioBuffer = null;
 let activeMode = null; // 'reverse', 'lyrics', or 'song'
-let currentActiveAudio = null; // HTML5 Audio instance
-let songChainTimeouts = [];    // Timers for 5-second switching
+let songChainTimeouts = [];    // Timers for switching
+
+// YouTube Player Initialization
+let ytPlayer = null;
+let isYtReady = false;
+
+const tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+const firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+function onYouTubeIframeAPIReady() {
+    ytPlayer = new YT.Player('youtube-player', {
+        height: '1',
+        width: '1',
+        playerVars: {
+            'autoplay': 1,
+            'controls': 0,
+            'playsinline': 1
+        },
+        events: {
+            'onReady': () => { 
+                isYtReady = true; 
+            },
+            'onError': (e) => {
+                console.error("YouTube Player Error Code:", e.data);
+                statusMsg.innerText = "❌ YouTube Video failed to play or embed is restricted.";
+            }
+        }
+    });
+}
 
 // Tracking state for custom reverse player
 let startTime = 0;
@@ -53,7 +82,7 @@ const backBtn = document.getElementById('back-btn');
 startScreen.addEventListener('click', () => {
     if (!isStarted) {
         isStarted = true;
-        introAudio.play();
+        introAudio.play().catch(e => console.log("Intro audio autoplay blocked", e));
         startScreen.classList.add('hidden');
         trapScreen.classList.remove('hidden');
         spawnTrapButtons();
@@ -96,7 +125,7 @@ function onWrongButtonClick() {
     introAudio.currentTime = 0;
     playbackSpeed += 0.25;
     introAudio.playbackRate = playbackSpeed;
-    introAudio.play();
+    introAudio.play().catch(e => console.log(e));
 
     const allButtons = buttonContainer.querySelectorAll('.close-btn');
     allButtons.forEach(button => positionRandomly(button));
@@ -125,16 +154,14 @@ function positionRandomly(button) {
 // -------------------------------------------------------------
 
 function stopAllPlayback() {
-    // Clear song chain timers
+    // Stop YouTube Player
+    if (ytPlayer && isYtReady && typeof ytPlayer.stopVideo === 'function') {
+        ytPlayer.stopVideo();
+    }
+
+    // Clear timers
     songChainTimeouts.forEach(t => clearTimeout(t));
     songChainTimeouts = [];
-
-    // Stop HTML5 Active Audio
-    if (currentActiveAudio) {
-        currentActiveAudio.pause();
-        currentActiveAudio.currentTime = 0;
-        currentActiveAudio = null;
-    }
 
     // Stop Speech
     window.speechSynthesis.cancel();
@@ -165,7 +192,7 @@ function formatTime(secs) {
 }
 
 // -------------------------------------------------------------
-// MODE 1: ENJOY THE TUNE (Reversed Audio)
+// MODE 1: ENJOY THE TUNE (Reversed Audio via MP3)
 // -------------------------------------------------------------
 
 document.querySelectorAll('.reverse-btn').forEach(button => {
@@ -271,7 +298,7 @@ function updateReverseProgressBar() {
 }
 
 // -------------------------------------------------------------
-// MODE 2: ENJOY THE LYRICS (Cheerful Text-To-Speech Player Controls)
+// MODE 2: ENJOY THE LYRICS (Speech Synthesis Player)
 // -------------------------------------------------------------
 
 document.querySelectorAll('.lyrics-btn').forEach(button => {
@@ -382,6 +409,17 @@ playPauseBtn.addEventListener('click', () => {
         } else {
             startSpeechFromText(speechText, 0);
         }
+    } else if (activeMode === 'song') {
+        if (ytPlayer && isYtReady) {
+            const state = ytPlayer.getPlayerState();
+            if (state === YT.PlayerState.PLAYING) {
+                ytPlayer.pauseVideo();
+                playPauseBtn.innerText = "▶ Play";
+            } else {
+                ytPlayer.playVideo();
+                playPauseBtn.innerText = "⏸ Pause";
+            }
+        }
     }
 });
 
@@ -404,6 +442,10 @@ volumeBar.addEventListener('input', () => {
     if (gainNode) {
         gainNode.gain.value = vol;
     }
+
+    if (ytPlayer && isYtReady && typeof ytPlayer.setVolume === 'function') {
+        ytPlayer.setVolume(vol * 100);
+    }
     
     if (window.speechSynthesis.speaking) {
         const remainingElapsed = speechElapsed;
@@ -414,11 +456,16 @@ volumeBar.addEventListener('input', () => {
 });
 
 // -------------------------------------------------------------
-// MODE 3: ENJOY THE SONG (5s Current Track -> 5s Next Track Chain)
+// MODE 3: ENJOY THE SONG (10s Initial playback -> Lockout on 2nd song via YouTube)
 // -------------------------------------------------------------
 
 document.querySelectorAll('.song-btn').forEach(button => {
     button.addEventListener('click', (e) => {
+        if (!isYtReady) {
+            statusMsg.innerText = "⏳ YouTube player is initializing, please try again in a moment...";
+            return;
+        }
+
         stopAllPlayback();
         activeMode = 'song';
 
@@ -427,52 +474,49 @@ document.querySelectorAll('.song-btn').forEach(button => {
         const currentIndex = parseInt(currentCard.getAttribute('data-index'));
         const nextIndex = (currentIndex + 1) % songCards.length;
 
-        const firstSongTitle = currentCard.getAttribute('data-title');
-        const firstSongUrl = currentCard.getAttribute('data-src');
+        const firstTitle = currentCard.getAttribute('data-title');
+        const firstYtId = currentCard.getAttribute('data-ytid');
 
         const nextCard = songCards[nextIndex];
-        const nextSongTitle = nextCard.getAttribute('data-title');
-        const nextSongUrl = nextCard.getAttribute('data-src');
+        const nextTitle = nextCard.getAttribute('data-title');
+        const nextYtId = nextCard.getAttribute('data-ytid');
 
-        // Show Unskippable Lockout Screen
-        lockoutScreen.classList.remove('hidden');
-<<<<<<< HEAD
-        statusMsg.innerText = `⏱️ Playing ${songCard.getAttribute('data-title')} for 10 seconds (Locked)...`;
-=======
-        lockoutTextDisplay.innerText = `🔒 Lockout Active! Playing 5s of "${firstSongTitle}"...`;
-        statusMsg.innerText = `⏱️ Playing 5s of "${firstSongTitle}"...`;
->>>>>>> 861481a (added multiple songs)
+        // 1. Show normal player box for the 10-second window
+        tunePlayerBox.classList.remove('hidden');
+        lockoutScreen.classList.add('hidden');
+        
+        playerStatusTitle.innerText = `🎵 Playing: ${firstTitle}`;
+        statusMsg.innerText = ""; // Text below music bar cleared
+        playPauseBtn.innerText = "⏸ Pause";
 
-        // 1. Play First Selected Song for 5 Seconds
-        currentActiveAudio = new Audio(firstSongUrl);
-        currentActiveAudio.play();
+        // Play First Selected Song on YouTube
+        ytPlayer.setVolume(parseFloat(volumeBar.value) * 100);
+        ytPlayer.loadVideoById({ videoId: firstYtId });
+        ytPlayer.playVideo();
 
-        // 2. Schedule transition to Next Song at 5 seconds
-        const t1 = setTimeout(() => {
-            if (currentActiveAudio) {
-                currentActiveAudio.pause();
-            }
+        // 2. Schedule switch after 10 seconds (10000ms)
+        const switchTimer = setTimeout(() => {
+            tunePlayerBox.classList.add('hidden');
+            lockoutScreen.classList.remove('hidden');
+            lockoutTextDisplay.innerText = "Enjoy the song! Without skipping!";
+            statusMsg.innerText = ""; // Text below music bar cleared during switch
 
-            lockoutTextDisplay.innerText = `🔒 Lockout Active! Next track: "${nextSongTitle}" (5s)...`;
-            statusMsg.innerText = `⏱️ Switched! Now playing 5s of "${nextSongTitle}"...`;
+            // Load and play the NEXT YouTube track fully
+            ytPlayer.loadVideoById({ videoId: nextYtId });
+            ytPlayer.playVideo();
 
-            currentActiveAudio = new Audio(nextSongUrl);
-            currentActiveAudio.play();
-
-            // 3. Complete 10-second lockout chain
-            const t2 = setTimeout(() => {
-                if (currentActiveAudio) {
-                    currentActiveAudio.pause();
-                    currentActiveAudio = null;
+            // Unlock screen when second YouTube video completes
+            const onEndStateChange = (event) => {
+                if (event.data === YT.PlayerState.ENDED) {
+                    lockoutScreen.classList.add('hidden');
+                    statusMsg.innerText = "";
+                    ytPlayer.removeEventListener('onStateChange', onEndStateChange);
                 }
-                lockoutScreen.classList.add('hidden');
-                statusMsg.innerText = "🎉 10-Second Song Chain finished!";
-            }, 5000);
+            };
+            ytPlayer.addEventListener('onStateChange', onEndStateChange);
 
-            songChainTimeouts.push(t2);
+        }, 10000); // 10 seconds
 
-        }, 5000);
-
-        songChainTimeouts.push(t1);
+        songChainTimeouts.push(switchTimer);
     });
 });
