@@ -26,14 +26,53 @@
     <!-- MAIN SONG SELECTION PAGE -->
     <main id="main-player" class="hidden">
         <h1>🎵 Song Selection</h1>
-        <p>Select a mode to play the track!</p>
+        <p id="selection-subtext">Select a mode to play the track!</p>
 
         <div id="song-list">
             <!-- Single Song Card -->
             <div class="song-card" 
                  data-title="vampire" 
                  data-src="https://files.catbox.moe/3g51mp.mp3" 
-                 data-lyrics="Cause I've made some real big mistakes
+                 data-lyrics="I hate to give the satisfaction asking how you're doing now
+How's the castle built off people you pretend to care about?
+Just what you wanted
+Look at you, cool guy, you got it
+I see the parties and the diamonds sometimes when I close my eyes
+Six months of torture you sold as some forbidden paradise
+I loved you truly
+You gotta laugh at the stupidity
+'Cause I've made some real big mistakes
+But you make the worst one look fine
+I should've known it was strange
+You only come out at night
+I used to think I was smart
+But you made me look so naive
+The way you sold me for parts
+As you sunk your teeth into me, oh
+Bloodsucker, fame-fucker
+Bleedin' me dry like a goddamn vampire
+And every girl I ever talked to told me you were bad, bad news
+You called them crazy, God, I hate the way I called them crazy too
+You're so convincing
+How do you lie without flinching?
+Ooh, what a mesmerizing, paralyzing, fucked-up little thrill
+Can't figure out just how you do it, and God knows I never will
+Went for me, and not her 'cause girls your age know better
+I've made some real big mistakes
+But you make the worst one look fine
+I should've known it was strange
+You only come out at night
+I used to think I was smart
+But you made me look so naive
+The way you sold me for parts
+As you sunk your teeth into me, oh
+Bloodsucker, fame-fucker
+Bleedin' me dry like a goddamn vampire
+You said it was true love, but wouldn't that be hard?
+You can't love anyone, 'cause that would mean you had a heart
+I tried you help you out, now I know that I can't
+'Cause how you think's the kind of thing I'll never understand
+I've made some real big mistakes
 But you make the worst one look fine
 I should've known it was strange
 You only come out at night
@@ -51,24 +90,26 @@ Bleedin' me dry like a goddamn vampire">
                     <button class="mode-btn lyrics-btn">🗣️ Enjoy the Lyrics</button>
                     <button class="mode-btn song-btn">⏱️ Enjoy the Song</button>
                 </div>
-
-                <!-- Custom Audio Controls Rectangle (Appears when Enjoy Tune is clicked) -->
-                <div id="tune-player-box" class="player-rectangle hidden">
-                    <h4 id="player-status-title">🌀 Reversed Audio Player</h4>
-                    
-                    <div class="controls-row">
-                        <button id="play-pause-btn" class="ctrl-btn">⏸ Pause</button>
-                        <input type="range" id="seek-bar" value="0" min="0" max="100" step="0.1">
-                        <span id="time-display">0:00 / 0:00</span>
-                    </div>
-
-                    <div class="volume-row">
-                        <label for="volume-bar">🔊 Volume:</label>
-                        <input type="range" id="volume-bar" value="1" min="0" max="1" step="0.05">
-                    </div>
-                </div>
-
             </div>
+        </div>
+
+        <!-- Custom Audio Controls Rectangle (Shared by Enjoy Tune & Enjoy Lyrics) -->
+        <div id="tune-player-box" class="player-rectangle hidden">
+            <h4 id="player-status-title">Player</h4>
+            
+            <div class="controls-row">
+                <button id="play-pause-btn" class="ctrl-btn">⏸ Pause</button>
+                <input type="range" id="seek-bar" value="0" min="0" max="100" step="0.1">
+                <span id="time-display">0:00 / 0:00</span>
+            </div>
+
+            <div class="volume-row">
+                <label for="volume-bar">🔊 Volume:</label>
+                <input type="range" id="volume-bar" value="1" min="0" max="1" step="0.05">
+            </div>
+
+            <!-- Back Button inside active player mode -->
+            <button id="back-btn" class="nav-btn">← Back to Song Selection</button>
         </div>
 
         <div id="status-message"></div>

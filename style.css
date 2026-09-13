@@ -169,6 +169,24 @@ body {
     gap: 10px;
     font-size: 14px;
     color: #ccc;
+    margin-bottom: 15px;
+}
+
+/* Back Navigation Button */
+.nav-btn {
+    background-color: #ff0055;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.2s ease;
+}
+
+.nav-btn:hover {
+    background-color: #d60047;
 }
 
 #status-message {
