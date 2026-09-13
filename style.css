@@ -1,242 +1,245 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* ---------- RESET ---------- */
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:'Poppins',sans-serif;
 }
 
-body {
-    font-family: 'Poppins', sans-serif;
-
-    background-image: url("./bg.jpg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-
-    color: #4B3124;
-    min-height: 100vh;
+.hidden{
+    display:none !important;
 }
 
-.hidden {
-    display: none !important;
+/* ---------- BODY ---------- */
+body{
+    background:url("./bg.jpg") center center/cover no-repeat fixed;
+    color:#4B3124;
+    min-height:100vh;
 }
 
-/* Modal Overlay & Trap Screen */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.85);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+/* ---------- POPUP ---------- */
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.55);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
 }
 
-.modal-content {
-    background-image: url("./popupbg.jpg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-
-    border: 2px solid #ff0055;
-    box-shadow: 0 0 25px rgba(255, 0, 85, 0.35);
-    border-radius: 15px;
-
-    width: 90%;
-    max-width: 600px;
-    height: 360px;
-
-    padding: 30px;
-    text-align: center;
-    position: relative;
-    user-select: none;
+.modal-content{
+    background:url("./popupbg.jpg") center center/cover no-repeat;
+    width:700px;
+    height:500px;
+    padding:30px;
+    border:none;
+    border-radius:25px;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 15px 35px rgba(0,0,0,0.35);
 }
 
-#trap-screen h2 {
-    font-size: 1.1rem;
-    color: #ff5555;
-    margin-bottom: 15px;
+/* ---------- START SCREEN ---------- */
+#start-screen{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    height:100%;
+    width:100%;
 }
 
-#button-container {
-    width: 100%;
-    height: 180px;
-    position: relative;
+#start-screen h2{
+    color:#5C3D2E;
+    text-shadow:1px 1px 2px rgba(255,255,255,0.8);
+    font-size:42px;
+    margin-bottom:12px;
 }
 
-/* Moving Fake/Real Close Buttons */
-.close-btn {
-    position: absolute;
-    width: 35px;
-    height: 35px;
-    background: #ff4757;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    font-weight: bold;
-    cursor: pointer;
-    transition: top 0.2s ease, left 0.2s ease;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+#start-screen p{
+    color:#3E2A20;
+    font-size:18px;
+    font-weight:600;
+    max-width:420px;
 }
 
-.close-btn:hover {
-    transform: scale(1.1);
+/* ---------- TRAP SCREEN ---------- */
+#trap-screen{
+    text-align:center;
 }
 
-/* Main Song Selection Page */
-/* Main Song Selection Page */
+#trap-screen h2{
+    color:#5C3D2E;
+    font-size:28px;
+    margin-bottom:20px;
+}
+
+#trap-screen p{
+    color:#3E2A20;
+    font-weight:600;
+}
+
+/* ---------- MOVING X BUTTONS ---------- */
+#button-container{
+    width:100%;
+    height:220px;
+    position:relative;
+}
+
+.close-btn{
+    position:absolute;
+    width:40px;
+    height:40px;
+    background:#C86B5B;
+    color:white;
+    border:2px solid white;
+    border-radius:50%;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+.close-btn:hover{
+    transform:scale(1.1);
+}
+
+/* ---------- MAIN PAGE ---------- */
 main{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;      /* Centers the song cards */
-
-    padding-top: 140px;       /* Pushes cards below the SPOILIFY logo */
-    padding-bottom: 40px;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding-top:140px;
+    padding-bottom:40px;
 }
 
-h1 {
-    margin-bottom: 5px;
+/* Hide heading */
+h1,
+#selection-subtext{
+    display:none;
 }
 
-#selection-subtext {
-    color: #aaa;
-    margin-bottom: 25px;
+/* ---------- SONG LIST ---------- */
+#song-list{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    width:90%;
+    max-width:700px;
 }
 
-#song-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+/* ---------- SONG CARDS ---------- */
+.song-card{
+    background:#6F4E37;
+    padding:18px 20px;
+    border-radius:14px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    border:2px solid #D8C3A5;
+    box-shadow:0 6px 15px rgba(92,61,46,0.25);
 }
 
-.song-card {
-    background: #282a36;
-    padding: 15px 20px;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+.song-card h3{
+    color:#FFF3E8;
+    font-size:22px;
+    font-weight:700;
 }
 
-.song-card h3 {
-    font-size: 1.2rem;
-    color: #f1fa8c;
+/* ---------- BUTTONS ---------- */
+.mode-buttons{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
 }
 
-.mode-buttons {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    flex-wrap: wrap;
+.mode-btn{
+    flex:1;
+    min-width:130px;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    background:#D8B892;
+    color:#5C3D2E;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
 }
 
-.mode-btn {
-    flex: 1;
-    min-width: 130px;
-    padding: 10px;
-    border: none;
-    border-radius: 6px;
-    background: #44475a;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
+.mode-btn:hover{
+    background:#C69C6D;
+    transform:translateY(-2px);
 }
 
-.mode-btn:hover {
-    background: #6272a4;
+/* ---------- PLAYER ---------- */
+.player-rectangle{
+    margin-top:25px;
+    width:90%;
+    max-width:700px;
+    background:#F5EBDD;
+    border:2px solid #C69C6D;
+    border-radius:12px;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
 }
 
-/* Custom Audio Control Rectangle */
-.player-rectangle {
-    margin-top: 25px;
-    background: #191a21;
-    border: 2px solid #6272a4;
-    border-radius: 10px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+.player-rectangle h4{
+    color:#5C3D2E;
 }
 
-.player-rectangle h4 {
-    color: #bd93f9;
+.controls-row,
+.volume-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
-.controls-row, .volume-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+.ctrl-btn,
+.nav-btn{
+    background:#8B5E3C;
+    color:white;
+    border:none;
+    padding:8px 14px;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-.ctrl-btn, .nav-btn {
-    background: #ff79c6;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 5px;
-    color: black;
-    font-weight: bold;
-    cursor: pointer;
+input[type="range"]{
+    flex:1;
+    cursor:pointer;
+    accent-color:#8B5E3C;
 }
 
-.nav-btn {
-    background: #ff5555;
-    color: white;
-    margin-top: 5px;
+/* ---------- STATUS ---------- */
+#status-message{
+    margin-top:15px;
+    font-weight:bold;
+    color:#5C3D2E;
+    text-align:center;
 }
 
-input[type="range"] {
-    flex: 1;
-    cursor: pointer;
+/* ---------- LOCKOUT SCREEN ---------- */
+#lockout-screen{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.4);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:2000;
 }
 
-#status-message {
-    margin-top: 15px;
-    font-weight: bold;
-    color: #50fa7b;
-}
-
-/* Transparent Lockout Screen for 10-Second Mode */
-#lockout-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 2000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: not-allowed;
-}
-
-.lockout-text {
-    background: #ff5555;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-}
-
-#start-screen h2,
-#trap-screen h2 {
-    color: #5C3D2E;
-    text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
-}
-
-#start-screen p,
-#trap-screen p {
-    color: #3E2A20;
-    font-weight: 600;
+.lockout-text{
+    background:#8B5E3C;
+    color:white;
+    padding:16px 28px;
+    border-radius:12px;
+    font-size:20px;
+    font-weight:bold;
 }
