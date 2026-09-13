@@ -1,11 +1,21 @@
-// Audio setup
-// Place your audio file 'blinded-lights-snippet.mp3' inside your project folder
-// Direct working link to the song snippet online
-const introAudio = new Audio('https://files.catbox.moe/nq6hdt.mp3');
+// Intro Trap Audio Setup
+const introAudio = new Audio('https://files.catbox.moe/qg0lrl.mp3'); 
 introAudio.loop = true;
 
 let playbackSpeed = 1.0;
 let isStarted = false;
+
+// Audio Context State for Reversed Player
+let audioCtx = null;
+let currentBufferSource = null;
+let reversedAudioBuffer = null;
+
+// Tracking state for custom reverse player
+let startTime = 0;
+let pausedAt = 0;
+let isPlayingReverse = false;
+let animFrameId = null;
+let gainNode = null;
 
 // DOM Elements
 const introModal = document.getElementById('intro-modal');
@@ -13,8 +23,17 @@ const startScreen = document.getElementById('start-screen');
 const trapScreen = document.getElementById('trap-screen');
 const buttonContainer = document.getElementById('button-container');
 const mainPlayer = document.getElementById('main-player');
+const statusMsg = document.getElementById('status-message');
+const lockoutScreen = document.getElementById('lockout-screen');
 
-// 1. Trigger audio on initial user interaction (Browser compliance)
+// Tune Player Elements
+const tunePlayerBox = document.getElementById('tune-player-box');
+const playPauseBtn = document.getElementById('play-pause-btn');
+const seekBar = document.getElementById('seek-bar');
+const timeDisplay = document.getElementById('time-display');
+const volumeBar = document.getElementById('volume-bar');
+
+// 1. Initial Interaction Trigger
 startScreen.addEventListener('click', () => {
     if (!isStarted) {
         isStarted = true;
@@ -25,19 +44,17 @@ startScreen.addEventListener('click', () => {
     }
 });
 
-// 2. Spawn multiple fake buttons and 1 real close button
+// 2. Spawn Trap Buttons
 function spawnTrapButtons() {
-    buttonContainer.innerHTML = ''; // Clear existing buttons
+    buttonContainer.innerHTML = '';
     const totalFakeButtons = 6;
 
-    // Generate Fake Buttons
     for (let i = 0; i < totalFakeButtons; i++) {
         const fakeBtn = document.createElement('button');
         fakeBtn.innerText = 'X';
         fakeBtn.classList.add('close-btn');
         positionRandomly(fakeBtn);
 
-        // Wrong button click action
         fakeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             onWrongButtonClick();
@@ -46,13 +63,11 @@ function spawnTrapButtons() {
         buttonContainer.appendChild(fakeBtn);
     }
 
-    // Generate Real Close Button
     const realBtn = document.createElement('button');
     realBtn.innerText = 'X';
     realBtn.classList.add('close-btn');
     positionRandomly(realBtn);
 
-    // Correct button click action
     realBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         onCorrectButtonClick();
@@ -61,27 +76,23 @@ function spawnTrapButtons() {
     buttonContainer.appendChild(realBtn);
 }
 
-// 3. Action when wrong button is clicked (Speed up & restart)
 function onWrongButtonClick() {
-    introAudio.currentTime = 0; // Restart snippet
-    playbackSpeed += 0.25;      // Increase speed by 25%
+    introAudio.currentTime = 0;
+    playbackSpeed += 0.25;
     introAudio.playbackRate = playbackSpeed;
     introAudio.play();
 
-    // Re-randomize positions of all buttons to scramble them
     const allButtons = buttonContainer.querySelectorAll('.close-btn');
     allButtons.forEach(button => positionRandomly(button));
 }
 
-// 4. Action when real close button is clicked
 function onCorrectButtonClick() {
-    introAudio.pause();          // Stop music
-    introAudio.currentTime = 0;   // Reset track
-    introModal.classList.add('hidden'); // Hide popup overlay
-    mainPlayer.classList.remove('hidden'); // Show song selection page
+    introAudio.pause();
+    introAudio.currentTime = 0;
+    introModal.classList.add('hidden');
+    mainPlayer.classList.remove('hidden');
 }
 
-// Helper: Position a button randomly within the container box
 function positionRandomly(button) {
     const containerWidth = buttonContainer.clientWidth - 50;
     const containerHeight = buttonContainer.clientHeight - 50;
@@ -92,3 +103,176 @@ function positionRandomly(button) {
     button.style.left = `${randomX}px`;
     button.style.top = `${randomY}px`;
 }
+
+// -------------------------------------------------------------
+// PLAYBACK MODES LOGIC
+// -------------------------------------------------------------
+
+function stopAllPlayback() {
+    window.speechSynthesis.cancel();
+    pauseReverseAudio();
+    tunePlayerBox.classList.add('hidden');
+}
+
+// MODE 1: ENJOY THE TUNE (Reversed Audio with Custom Controls Box)
+document.querySelectorAll('.reverse-btn').forEach(button => {
+    button.addEventListener('click', async (e) => {
+        stopAllPlayback();
+        const songCard = e.target.closest('.song-card');
+        const songUrl = songCard.getAttribute('data-src');
+
+        statusMsg.innerText = "🌀 Fetching audio and reversing waveform... Please wait!";
+
+        try {
+            await prepareReverseAudio(songUrl);
+            tunePlayerBox.classList.remove('hidden'); // Reveal custom controls rectangle
+            startReverseAudio(0); // Start from beginning
+            statusMsg.innerText = "▶ Playing reversed audio with custom controls!";
+        } catch (err) {
+            console.error(err);
+            statusMsg.innerText = "❌ Failed to load audio file.";
+        }
+    });
+});
+
+async function prepareReverseAudio(url) {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
+    const decodedBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+    // Create reversed buffer copy
+    reversedAudioBuffer = audioCtx.createBuffer(
+        decodedBuffer.numberOfChannels,
+        decodedBuffer.length,
+        decodedBuffer.sampleRate
+    );
+
+    for (let channel = 0; channel < decodedBuffer.numberOfChannels; channel++) {
+        const inputData = decodedBuffer.getChannelData(channel);
+        const outputData = reversedAudioBuffer.getChannelData(channel);
+        for (let i = 0; i < decodedBuffer.length; i++) {
+            outputData[i] = inputData[decodedBuffer.length - 1 - i];
+        }
+    }
+
+    // Set max seek range
+    seekBar.max = reversedAudioBuffer.duration;
+}
+
+function startReverseAudio(offset) {
+    if (!reversedAudioBuffer) return;
+
+    if (currentBufferSource) {
+        try { currentBufferSource.stop(); } catch(e){}
+    }
+
+    currentBufferSource = audioCtx.createBufferSource();
+    currentBufferSource.buffer = reversedAudioBuffer;
+
+    gainNode = audioCtx.createGain();
+    gainNode.gain.value = volumeBar.value;
+
+    currentBufferSource.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    startTime = audioCtx.currentTime - offset;
+    pausedAt = offset;
+
+    currentBufferSource.start(0, offset);
+    isPlayingReverse = true;
+    playPauseBtn.innerText = "⏸ Pause";
+
+    updateProgressBar();
+}
+
+function pauseReverseAudio() {
+    if (currentBufferSource && isPlayingReverse) {
+        currentBufferSource.stop();
+        pausedAt = audioCtx.currentTime - startTime;
+        isPlayingReverse = false;
+        playPauseBtn.innerText = "▶ Play";
+        cancelAnimationFrame(animFrameId);
+    }
+}
+
+function updateProgressBar() {
+    if (!isPlayingReverse) return;
+
+    const currentTime = audioCtx.currentTime - startTime;
+    if (currentTime >= reversedAudioBuffer.duration) {
+        isPlayingReverse = false;
+        playPauseBtn.innerText = "▶ Play";
+        seekBar.value = 0;
+        pausedAt = 0;
+        return;
+    }
+
+    seekBar.value = currentTime;
+    timeDisplay.innerText = `${formatTime(currentTime)} / ${formatTime(reversedAudioBuffer.duration)}`;
+    animFrameId = requestAnimationFrame(updateProgressBar);
+}
+
+function formatTime(secs) {
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+// Control Event Listeners
+playPauseBtn.addEventListener('click', () => {
+    if (isPlayingReverse) {
+        pauseReverseAudio();
+    } else {
+        startReverseAudio(pausedAt);
+    }
+});
+
+seekBar.addEventListener('input', () => {
+    const seekTo = parseFloat(seekBar.value);
+    startReverseAudio(seekTo);
+});
+
+volumeBar.addEventListener('input', () => {
+    if (gainNode) {
+        gainNode.gain.value = volumeBar.value;
+    }
+});
+
+// MODE 2: ENJOY THE LYRICS
+document.querySelectorAll('.lyrics-btn').forEach(button => {
+    button.addEventListener('click', (e) => {
+        stopAllPlayback();
+        const songCard = e.target.closest('.song-card');
+        const lyrics = songCard.getAttribute('data-lyrics');
+
+        statusMsg.innerText = "🗣️ Speaking lyrics...";
+        const speech = new SpeechSynthesisUtterance(lyrics);
+        speech.rate = 0.9;
+        window.speechSynthesis.speak(speech);
+    });
+});
+
+// MODE 3: ENJOY THE SONG (10-Second Lockout)
+document.querySelectorAll('.song-btn').forEach(button => {
+    button.addEventListener('click', (e) => {
+        stopAllPlayback();
+        const songCard = e.target.closest('.song-card');
+        const songUrl = songCard.getAttribute('data-src');
+
+        const activeAudio = new Audio(songUrl);
+        activeAudio.play();
+
+        lockoutScreen.classList.remove('hidden');
+        statusMsg.innerText = "⏱️ Playing song for 10 seconds (Locked)...";
+
+        setTimeout(() => {
+            activeAudio.pause();
+            lockoutScreen.classList.add('hidden');
+            statusMsg.innerText = "🎉 10 Seconds finished!";
+        }, 10000);
+    });
+});

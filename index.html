@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chaotic Music Player</title>
-    <!-- Check that style.css is in the same folder -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,7 +11,6 @@
     <!-- INTRO POPUP OVERLAY -->
     <div id="intro-modal" class="modal-overlay">
         <div class="modal-content">
-            
             <div id="start-screen">
                 <h2>⚠️ WARNING ⚠️</h2>
                 <p>Click anywhere inside this box to enter the player...</p>
@@ -23,15 +21,55 @@
                 <p>Wrong buttons restart and speed up the song!</p>
                 <div id="button-container"></div>
             </div>
-
         </div>
     </div>
 
     <!-- MAIN SONG SELECTION PAGE -->
     <main id="main-player" class="hidden">
         <h1>🎵 Song Selection</h1>
-        <p>Choose a track to test the player modes!</p>
+        <p>Select a mode to play the track!</p>
+
+        <div id="song-list">
+            <!-- Single Song Card -->
+            <div class="song-card" 
+                 data-title="Never Gonna Give You Up" 
+                 data-src="https://files.catbox.moe/qg0lrl.mp3" 
+                 data-lyrics="Never gonna give you up. Never gonna let you down. Never gonna run around and desert you. Never gonna make you cry. Never gonna say goodbye. Never gonna tell a lie and hurt you.">
+                
+                <h3>1. Never Gonna Give You Up - Rick Astley</h3>
+                
+                <div class="mode-buttons">
+                    <button class="mode-btn reverse-btn">🌀 Enjoy the Tune</button>
+                    <button class="mode-btn lyrics-btn">🗣️ Enjoy the Lyrics</button>
+                    <button class="mode-btn song-btn">⏱️ Enjoy the Song</button>
+                </div>
+
+                <!-- Custom Audio Controls Rectangle (Appears when Enjoy Tune is clicked) -->
+                <div id="tune-player-box" class="player-rectangle hidden">
+                    <h4 id="player-status-title">🌀 Reversed Audio Player</h4>
+                    
+                    <div class="controls-row">
+                        <button id="play-pause-btn" class="ctrl-btn">⏸ Pause</button>
+                        <input type="range" id="seek-bar" value="0" min="0" max="100" step="0.1">
+                        <span id="time-display">0:00 / 0:00</span>
+                    </div>
+
+                    <div class="volume-row">
+                        <label for="volume-bar">🔊 Volume:</label>
+                        <input type="range" id="volume-bar" value="1" min="0" max="1" step="0.05">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="status-message"></div>
     </main>
+
+    <!-- Transparent Lockout Screen for 10-Second Mode -->
+    <div id="lockout-screen" class="hidden">
+        <div class="lockout-text">🔒 Player Locked for 10 Seconds!</div>
+    </div>
 
     <script src="script.js"></script>
 </body>

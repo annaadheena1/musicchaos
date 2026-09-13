@@ -8,11 +8,10 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #0f0f13;
     color: #ffffff;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
 }
 
-/* Fullscreen Dark Modal Overlay */
+/* Fullscreen Trap Overlay */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -26,7 +25,6 @@ body {
     z-index: 9999;
 }
 
-/* Popup Box Styling */
 .modal-content {
     background: #1e1e24;
     border: 2px solid #ff0055;
@@ -41,7 +39,6 @@ body {
     user-select: none;
 }
 
-/* Start Button Overlay */
 #start-screen {
     display: flex;
     flex-direction: column;
@@ -56,7 +53,6 @@ body {
     margin-bottom: 15px;
 }
 
-/* Close Buttons Container */
 #button-container {
     position: relative;
     width: 100%;
@@ -64,7 +60,6 @@ body {
     margin-top: 15px;
 }
 
-/* Close Button Styling */
 .close-btn {
     position: absolute;
     width: 40px;
@@ -77,11 +72,6 @@ body {
     border-radius: 50%;
     cursor: pointer;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    transition: transform 0.1s ease;
-}
-
-.close-btn:hover {
-    transform: scale(1.1);
 }
 
 .hidden {
@@ -91,5 +81,124 @@ body {
 /* Main App Layout */
 #main-player {
     text-align: center;
-    padding-top: 100px;
+    padding: 40px 20px;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.song-card {
+    background-color: #1e1e24;
+    border: 1px solid #333;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: left;
+    margin-top: 30px;
+}
+
+.song-card h3 {
+    margin-bottom: 20px;
+    color: #00ffff;
+}
+
+.mode-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.mode-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #2b2b36;
+    color: white;
+    transition: transform 0.1s ease, background 0.2s ease;
+}
+
+.mode-btn:hover {
+    background-color: #3f3f50;
+    transform: translateY(-2px);
+}
+
+.reverse-btn { border: 1px solid #00ffff; color: #00ffff; }
+.lyrics-btn { border: 1px solid #ff00ff; color: #ff00ff; }
+.song-btn { border: 1px solid #00ff88; color: #00ff88; }
+
+/* Custom Audio Player Rectangle */
+.player-rectangle {
+    margin-top: 25px;
+    background: #15151a;
+    border: 2px solid #00ffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+}
+
+.player-rectangle h4 {
+    color: #00ffff;
+    margin-bottom: 15px;
+}
+
+.controls-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.ctrl-btn {
+    background: #00ffff;
+    color: #000;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.controls-row input[type="range"] {
+    flex: 1;
+    cursor: pointer;
+}
+
+.volume-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #ccc;
+}
+
+#status-message {
+    margin-top: 25px;
+    font-size: 16px;
+    color: #ff0055;
+    font-weight: bold;
+}
+
+/* 10-Second Lockout Screen Overlay */
+#lockout-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 8888;
+    cursor: not-allowed;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 50px;
+}
+
+.lockout-text {
+    background: #ff0055;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 30px;
+    font-weight: bold;
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.8);
 }
