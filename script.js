@@ -1,4 +1,4 @@
-// Intro Trap Audio Setup (Plays 'Never Gonna Give You Up' during the trap screen)
+// Intro Trap Audio Setup
 const introAudio = new Audio('https://files.catbox.moe/qg0lrl.mp3'); 
 introAudio.loop = true;
 
@@ -10,6 +10,8 @@ let audioCtx = null;
 let currentBufferSource = null;
 let reversedAudioBuffer = null;
 let activeMode = null; // 'reverse', 'lyrics', or 'song'
+let currentActiveAudio = null; // HTML5 Audio instance
+let songChainTimeouts = [];    // Timers for 5-second switching
 
 // Tracking state for custom reverse player
 let startTime = 0;
@@ -36,6 +38,7 @@ const mainPlayer = document.getElementById('main-player');
 const songList = document.getElementById('song-list');
 const statusMsg = document.getElementById('status-message');
 const lockoutScreen = document.getElementById('lockout-screen');
+const lockoutTextDisplay = document.getElementById('lockout-text-display');
 
 // Player Rectangle Elements
 const tunePlayerBox = document.getElementById('tune-player-box');
@@ -122,6 +125,17 @@ function positionRandomly(button) {
 // -------------------------------------------------------------
 
 function stopAllPlayback() {
+    // Clear song chain timers
+    songChainTimeouts.forEach(t => clearTimeout(t));
+    songChainTimeouts = [];
+
+    // Stop HTML5 Active Audio
+    if (currentActiveAudio) {
+        currentActiveAudio.pause();
+        currentActiveAudio.currentTime = 0;
+        currentActiveAudio = null;
+    }
+
     // Stop Speech
     window.speechSynthesis.cancel();
     clearInterval(speechTimerId);
@@ -131,13 +145,14 @@ function stopAllPlayback() {
     // Stop Reverse Audio
     pauseReverseAudio();
 
-    // Reset controls UI
+    // Reset UI
     tunePlayerBox.classList.add('hidden');
+    lockoutScreen.classList.add('hidden');
     statusMsg.innerText = "";
     activeMode = null;
 }
 
-// Back to Song Selection Button Handler
+// Back to Song Selection Handler
 backBtn.addEventListener('click', () => {
     stopAllPlayback();
     songList.classList.remove('hidden');
@@ -279,13 +294,10 @@ function startSpeechFromText(textToSpeak, startCharIndex = 0) {
     window.speechSynthesis.cancel();
     clearInterval(speechTimerId);
 
-    // Strip sentence-ending punctuation so speech tone never drops
     const cheerfulLyrics = textToSpeak.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "");
-
     const textChunk = cheerfulLyrics.slice(startCharIndex);
     currentSpeechUtterance = new SpeechSynthesisUtterance(textChunk);
     
-    // Hyper-cheerful settings
     currentSpeechUtterance.pitch = 2.0; 
     currentSpeechUtterance.rate = 1.4;   
     currentSpeechUtterance.volume = parseFloat(volumeBar.value);
@@ -402,7 +414,7 @@ volumeBar.addEventListener('input', () => {
 });
 
 // -------------------------------------------------------------
-// MODE 3: ENJOY THE SONG (10-Second Lockout)
+// MODE 3: ENJOY THE SONG (5s Current Track -> 5s Next Track Chain)
 // -------------------------------------------------------------
 
 document.querySelectorAll('.song-btn').forEach(button => {
@@ -410,19 +422,57 @@ document.querySelectorAll('.song-btn').forEach(button => {
         stopAllPlayback();
         activeMode = 'song';
 
-        const songCard = e.target.closest('.song-card');
-        const songUrl = songCard.getAttribute('data-src');
+        const songCards = Array.from(document.querySelectorAll('.song-card'));
+        const currentCard = e.target.closest('.song-card');
+        const currentIndex = parseInt(currentCard.getAttribute('data-index'));
+        const nextIndex = (currentIndex + 1) % songCards.length;
 
-        const activeAudio = new Audio(songUrl);
-        activeAudio.play();
+        const firstSongTitle = currentCard.getAttribute('data-title');
+        const firstSongUrl = currentCard.getAttribute('data-src');
 
+        const nextCard = songCards[nextIndex];
+        const nextSongTitle = nextCard.getAttribute('data-title');
+        const nextSongUrl = nextCard.getAttribute('data-src');
+
+        // Show Unskippable Lockout Screen
         lockoutScreen.classList.remove('hidden');
+<<<<<<< HEAD
         statusMsg.innerText = `⏱️ Playing ${songCard.getAttribute('data-title')} for 10 seconds (Locked)...`;
+=======
+        lockoutTextDisplay.innerText = `🔒 Lockout Active! Playing 5s of "${firstSongTitle}"...`;
+        statusMsg.innerText = `⏱️ Playing 5s of "${firstSongTitle}"...`;
+>>>>>>> 861481a (added multiple songs)
 
-        setTimeout(() => {
-            activeAudio.pause();
-            lockoutScreen.classList.add('hidden');
-            statusMsg.innerText = "🎉 10 Seconds finished!";
-        }, 10000);
+        // 1. Play First Selected Song for 5 Seconds
+        currentActiveAudio = new Audio(firstSongUrl);
+        currentActiveAudio.play();
+
+        // 2. Schedule transition to Next Song at 5 seconds
+        const t1 = setTimeout(() => {
+            if (currentActiveAudio) {
+                currentActiveAudio.pause();
+            }
+
+            lockoutTextDisplay.innerText = `🔒 Lockout Active! Next track: "${nextSongTitle}" (5s)...`;
+            statusMsg.innerText = `⏱️ Switched! Now playing 5s of "${nextSongTitle}"...`;
+
+            currentActiveAudio = new Audio(nextSongUrl);
+            currentActiveAudio.play();
+
+            // 3. Complete 10-second lockout chain
+            const t2 = setTimeout(() => {
+                if (currentActiveAudio) {
+                    currentActiveAudio.pause();
+                    currentActiveAudio = null;
+                }
+                lockoutScreen.classList.add('hidden');
+                statusMsg.innerText = "🎉 10-Second Song Chain finished!";
+            }, 5000);
+
+            songChainTimeouts.push(t2);
+
+        }, 5000);
+
+        songChainTimeouts.push(t1);
     });
 });
